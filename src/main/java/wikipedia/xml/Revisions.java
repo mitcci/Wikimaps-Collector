@@ -9,7 +9,7 @@ import org.simpleframework.xml.Root;
  * see http://en.wikipedia.org/w/api.php
  */
 @Root(strict = false)
-public class Revisions {
+public final class Revisions {
 
     @Element(required = false)
     private String text;

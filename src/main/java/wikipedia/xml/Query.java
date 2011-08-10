@@ -30,6 +30,17 @@ public final class Query {
     @ElementList(required = false)
     private List<Page> backlinks;
 
+    @ElementList(required = false)
+    private List<Item> usercontribs;
+
+    public List<Item> getUsercontribs() {
+        return usercontribs;
+    }
+
+    public void setUsercontribs(final List<Item> usercontribs) {
+        this.usercontribs = usercontribs;
+    }
+
     public List<Page> getRandom() {
         return random;
     }

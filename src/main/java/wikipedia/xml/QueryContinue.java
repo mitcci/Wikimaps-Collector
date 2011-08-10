@@ -16,6 +16,17 @@ public final class QueryContinue {
     @Element(required = false)
     private CategoryMembers categorymembers;
 
+    @Element(required = false)
+    private Usercontribs usercontribs;
+
+    public Usercontribs getUsercontribs() {
+        return usercontribs;
+    }
+
+    public void setUsercontribs(final Usercontribs usercontribs) {
+        this.usercontribs = usercontribs;
+    }
+
     public CategoryMembers getCategorymembers() {
         return categorymembers;
     }
