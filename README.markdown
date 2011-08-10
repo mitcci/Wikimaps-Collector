@@ -25,4 +25,4 @@ The fetcher stores some intermediate results in a MySql Database:
 directory "db_scripts"
 
 ## Initial Autor
-Github-User: ret0
+<https://github.com/ret0>

@@ -11,9 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.graphstream.algorithm.BetweennessCentrality;
 import org.graphstream.algorithm.Dijkstra;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.graph.implementations.MultiGraph;
 import org.joda.time.DateTime;
@@ -32,7 +30,7 @@ import com.google.common.collect.Sets;
 /**
  * Builds a Network structure based on all pages in the given categories
  */
-public final class NetworkBuilder {
+public final class ArticleNetworkBuilder {
 
     private static final int MAX_NODES = 60;
     /**
@@ -40,23 +38,20 @@ public final class NetworkBuilder {
      */
     private static final int INDEG_MULTIPLICATOR = 1000;
 
-    private static final Logger LOG = LoggerFactory.getLogger(NetworkBuilder.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ArticleNetworkBuilder.class.getName());
     private static final int NUM_THREADS = 8;
     private final ExecutorService threadPool = Executors.newFixedThreadPool(NUM_THREADS);
 
     private final String searchTerm;
     private final DBUtil database;
     private final Map<Integer, String> allPagesInNetwork;
-    private final String lang;
 
-    public NetworkBuilder(final Map<Integer, String> allPagesInNetwork,
+    public ArticleNetworkBuilder(final Map<Integer, String> allPagesInNetwork,
                           final DBUtil database,
-                          final String searchTerm,
-                          final String lang) {
+                          final String searchTerm) {
         this.database = database;
         this.allPagesInNetwork = allPagesInNetwork;
         this.searchTerm = searchTerm;
-        this.lang = lang;
     }
 
     public TimeFrameGraph getGraphAtDate(final DateTime dateTime) {
@@ -79,31 +74,13 @@ public final class NetworkBuilder {
                         mutuallyConnectedNeighbors, allPagesOrderedByIndeg));
 
         Map<String, Integer> allDirectNeighborsByShortestPath = new MapSorter<String, Integer>()
-                .sortByValue(
-                        generateSPMapForDirectNeighbors(allPagesOrderedByIndeg.keySet(),
+                .sortByValue(generateSPMapForDirectNeighbors(allPagesOrderedByIndeg.keySet(),
                                 shortestPath, graph), true);
 
         Map<String, Integer> nameIndexMap = addQualifiedNodesToMap(allPagesOrderedByIndeg,
                 allMutuallyConnectdNeighborsByIndeg, allDirectNeighborsByShortestPath);
 
         List<GraphEdge> edgeOutput = prepareEdgeList(indegreeMatrix, nameIndexMap);
-
-//        AuthorRelatedPagesFetcher arpf = new AuthorRelatedPagesFetcher(nameIndexMap.keySet(), lang);
-//        arpf.getRelatedPages();
-
-        //-------------------------------------------
-        //-------------------------------------------
-        BetweennessCentrality bcb = new BetweennessCentrality();
-        bcb.setWeightAttributeName("weight");
-        bcb.init(graph);
-        LOG.info("Calulation: BetweennessCentrality");
-        bcb.compute();
-        for (String pageName : nameIndexMap.keySet()) {
-            Node node = graph.getNode(pageName);
-            System.out.println(node.getId() + "," + node.getAttribute("Cb") + "," + indegreeMatrix.get(pageName).size());
-        }
-        //-------------------------------------------
-        //-------------------------------------------
 
         return new TimeFrameGraph(nameIndexMap, edgeOutput, dateTime);
     }

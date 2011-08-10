@@ -67,7 +67,7 @@ public final class UsertalkNetworkFetcher {
             LOG.error("Error while shutting down Threadpool", e);
         }
         while (!newFixedThreadPool.isTerminated()) {
-            // wait for all tasks or timeout
+            LOG.debug("Waiting for ThreadPool termination");
         }
     }
 

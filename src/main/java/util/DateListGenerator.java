@@ -60,6 +60,9 @@ public final class DateListGenerator {
         return allDatesToFetch;
     }
 
+    /**
+     * interface for various date unit implemenations
+     */
     protected interface DateMinusCalc {
         DateTime minusUnit(DateTime startDate, int units);
     }

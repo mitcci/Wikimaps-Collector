@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.joda.time.DateTime;
 
-public class Revision implements Serializable {
+public final class Revision implements Serializable {
 
     private static final long serialVersionUID = 4868909223601860648L;
 

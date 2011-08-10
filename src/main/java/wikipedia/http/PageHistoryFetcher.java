@@ -25,7 +25,7 @@ import wikipedia.network.PageLinkInfo;
  */
 public final class PageHistoryFetcher {
 
-    private static final int THREAD_SLEEP_MSEC = 1200;
+    //private static final int THREAD_SLEEP_MSEC = 1200;
     private static final int THREADPOOL_TERMINATION_WAIT_MINUTES = 1;
     private static final int NUM_THREADS = 8;
 

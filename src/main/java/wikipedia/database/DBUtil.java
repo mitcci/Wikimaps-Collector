@@ -36,11 +36,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Util for all DB read/write ops
+ * Util for all DB read/write ops, should be specialized / splitt up
  */
 public final class DBUtil {
 
-    private static final String USER_TALK_QUERY = "SELECT nbrRevisions FROM usertalk_cache WHERE usertalk_cache.from = ? AND usertalk_cache.to = ?";
+    private static final String USER_TALK_QUERY = "SELECT nbrRevisions FROM usertalk_cache "
+            + "WHERE usertalk_cache.from = ? AND usertalk_cache.to = ?";
     private static final int SLEEP_BETWEEN_REQUESTS = 400;
     private static final int MAX_TITLE_LENGTH = 256;
     public static final String MYSQL_DATETIME = "YYYY-MM-dd HH:mm:ss";
@@ -99,13 +100,11 @@ public final class DBUtil {
                                    final String timeStamp,
                                    final String outgoingLink) {
                 if (outgoingLink.length() < MAX_TITLE_LENGTH) {
-                    //LOG.info("Storing " + outgoingLink + " at " + timeStamp + " from Page: " + pliToBeStored.getPageTitle());
                     try {
-                        jdbcTemplate.update(
-                                "INSERT INTO outgoing_links "
-                                        + "(src_page_id, target_page_title, revision_date) "
-                                        + "VALUES (?, ?, ?)", new Object[] {pliToBeStored.getPageID(),
-                                        outgoingLink, timeStamp });
+                        jdbcTemplate.update("INSERT INTO outgoing_links "
+                                + "(src_page_id, target_page_title, revision_date) "
+                                + "VALUES (?, ?, ?)", new Object[] {pliToBeStored.getPageID(),
+                                outgoingLink, timeStamp });
                     } catch (UncategorizedSQLException e) {
                         e.printStackTrace();
                     }
@@ -197,14 +196,14 @@ public final class DBUtil {
     private void storePageEntry(final String lang,
                                 final Integer pageId,
                                 final String pageTitle) {
-        final FirstRevisionFetcher firstRevisionFetcher = new FirstRevisionFetcher(pageTitle,
-                lang, new WikiAPIClient(new DefaultHttpClient()));
+        final FirstRevisionFetcher firstRevisionFetcher = new FirstRevisionFetcher(pageTitle, lang,
+                new WikiAPIClient(new DefaultHttpClient()));
         DateTime firstRevisionDate = firstRevisionFetcher.getFirstRevisionDate();
         String dateString = firstRevisionDate.toString(DateTimeFormat
                 .forPattern(DBUtil.MYSQL_DATETIME));
         jdbcTemplate.update(
-                "INSERT INTO pages (page_id, page_title, creation_date) VALUES (?, ?, ?)",
-                pageId, pageTitle, dateString);
+                "INSERT INTO pages (page_id, page_title, creation_date) VALUES (?, ?, ?)", pageId,
+                pageTitle, dateString);
         LOG.info("NEW STORAGE: " + pageTitle);
     }
 
@@ -252,11 +251,12 @@ public final class DBUtil {
         return categoryMembers;
     }
 
-    public int getPageIDFromCache(final String pageTitle, final String lang) {
+    public int getPageIDFromCache(final String pageTitle,
+                                  final String lang) {
         try {
-            //FIXME introduce filtering for names like: File:
+            // FIXME introduce filtering for names like: File:
             int pageId = jdbcTemplate.queryForInt("SELECT page_id FROM pages WHERE page_title = ?",
-                    new Object[] {pageTitle});
+                    new Object[] {pageTitle });
             return pageId;
         } catch (EmptyResultDataAccessException e) {
             LOG.info("downloading id for page: " + pageTitle);
@@ -269,8 +269,8 @@ public final class DBUtil {
 
     public boolean userConversationInCache(final GraphEdge userCommunicationPair) {
         try {
-            jdbcTemplate.queryForInt(USER_TALK_QUERY,
-                    new Object[] {userCommunicationPair.getFrom(), userCommunicationPair.getTo()});
+            jdbcTemplate.queryForInt(USER_TALK_QUERY, new Object[] {userCommunicationPair.getFrom(),
+                    userCommunicationPair.getTo() });
             return true;
         } catch (EmptyResultDataAccessException e) {
             return false;
@@ -279,14 +279,15 @@ public final class DBUtil {
 
     public int getUserConversationFromCache(final GraphEdge userCommunicationPair) {
         return jdbcTemplate.queryForInt(USER_TALK_QUERY,
-                new Object[] {userCommunicationPair.getFrom(), userCommunicationPair.getTo()});
+                new Object[] {userCommunicationPair.getFrom(), userCommunicationPair.getTo() });
     }
 
     public void cacheUserConversation(final GraphEdge userCommunicationPair,
                                       final int numberOfRevisions) {
-        jdbcTemplate.update("INSERT INTO usertalk_cache (usertalk_cache.from, usertalk_cache.to, usertalk_cache.nbrRevisions) VALUES(?, ?, ?)",
-                new Object[] {userCommunicationPair.getFrom(), userCommunicationPair.getTo(),
-                        numberOfRevisions });
+        jdbcTemplate.update("INSERT INTO usertalk_cache "
+                + "(usertalk_cache.from, usertalk_cache.to, usertalk_cache.nbrRevisions) "
+                + "VALUES(?, ?, ?)", new Object[] {userCommunicationPair.getFrom(),
+                userCommunicationPair.getTo(), numberOfRevisions });
     }
 
 }

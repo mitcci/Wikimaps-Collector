@@ -13,6 +13,9 @@ import wikipedia.xml.Api;
 import wikipedia.xml.Rev;
 import wikipedia.xml.XMLTransformer;
 
+/**
+ * Downloads all revisions of a single article
+ */
 public final class PageRevisionFetcher {
 
     private static final int PAGE_SIZE = 500;

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -22,6 +23,9 @@ import util.Const;
 import util.DateListGenerator;
 import util.MapSorter;
 import wikipedia.analysis.pagenetwork.DeltaPrinter;
+import wikipedia.analysis.useractivity.PageRevisionFetcher;
+import wikipedia.analysis.useractivity.Revisions;
+import wikipedia.analysis.useractivity.UserContribFetcher;
 import wikipedia.database.DBUtil;
 import wikipedia.http.PageHistoryFetcher;
 import wikipedia.http.PageLinkInfoFetcher;
@@ -33,7 +37,6 @@ import com.google.common.collect.Sets;
 
 
 public final class RelatedResultsFetcher {
-
 
     private static final int MAX_SEARCHRESULTS = 12;
 
@@ -162,16 +165,53 @@ public final class RelatedResultsFetcher {
         Map<String, Integer> initialSearchResults = getActivityMap(MAX_SEARCHRESULTS);
         allSeenNodes.addAll(initialSearchResults.keySet());
 
+
         for (String topEntry : initialSearchResults.keySet()) {
             PageLinkInfoFetcher plif = new PageLinkInfoFetcher(topEntry, lang, mostRecentDate, wikiAPIClient);
             allSeenNodes.addAll(plif.getLinkInformation().getFilteredLinks());
         }
+
+        System.out.println("start author search");
+        allSeenNodes.addAll(addNodesAccordingToTopAuthors(initialSearchResults.keySet()));
+        System.out.println("end author search");
+
+
         LOG.info("Downloading information for " + allSeenNodes.size() + " pages");
         Map<Integer, String> allPages = prepareNodesForNetwork(allSeenNodes);
 
         DeltaPrinter dp = new DeltaPrinter(allPages, allTimeFrames, lang);
         String completeJSONForPage = dp.buildNetworksAndGenerateInfo(searchTerm);
         writeToFile(completeJSONForPage);
+    }
+
+    /**
+     * Pick pages that the top 10 authors also worked on
+     *
+     * @param allSeenNodes
+     * @return
+     */
+    private Collection<? extends String> addNodesAccordingToTopAuthors(final Set<String> allSeenNodes) {
+        Map<String, Integer> editsPerAuthor = Maps.newHashMap();
+        for (String pageName : allSeenNodes) {
+            Revisions articleRevisions = new PageRevisionFetcher(lang, pageName).getArticleRevisions();
+            Map<String, Integer> editsPerPageAuthor = articleRevisions.getEditsPerAuthor();
+            for (Entry<String, Integer> pageAuthorEntry : editsPerPageAuthor.entrySet()) {
+                final String userID = pageAuthorEntry.getKey();
+                if (editsPerAuthor.containsKey(userID)) {
+                    editsPerAuthor.put(userID, editsPerAuthor.get(userID) + pageAuthorEntry.getValue());
+                } else {
+                    editsPerAuthor.put(userID, pageAuthorEntry.getValue());
+                }
+            }
+        }
+        Map<String, Integer> sortByValue = new MapSorter<String, Integer>().sortByValue(editsPerAuthor);
+        final List<String> topAuthors = Lists.newArrayList(sortByValue.keySet()).subList(0, 10);
+        Set<String> authorRelatedPages = Sets.newHashSet();
+        for (String userName : topAuthors) {
+            UserContribFetcher contribFetcher = new UserContribFetcher(lang, userName);
+            authorRelatedPages.addAll(contribFetcher.getMostEditedPages());
+        }
+        return authorRelatedPages;
     }
 
     private void writeToFile(final String completeJSONForPage) {
