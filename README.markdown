@@ -1,8 +1,10 @@
 # Project Wikimaps-Collector
+*Build semantic network of Wikipedia articles based on a single search term. JSON output*
 
 ## Main Use-Case
 Use the Wikipedia API to download information about articles and authors and then build a semantic
-network.
+network. The resulting graph of Wikipedia articles is printed in JSON format and can be used in 
+<https://github.com/mitcci/Wikimaps-Visualization>
 
 ## Howto-Run
 RelatedResultsFetcher (main-function) the first and only command line argument is the path
