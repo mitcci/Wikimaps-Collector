@@ -22,7 +22,7 @@ public final class PageRevisionFetcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageRevisionFetcher.class.getName());
 
-    private static final int MAX_REVISIONS = 2000;
+    private static final int MAX_REVISIONS = 4000;
 
     private final DefaultHttpClient httpclient = new DefaultHttpClient();
     private final WikiAPIClient wikiAPIClient = new WikiAPIClient(httpclient);
@@ -88,7 +88,7 @@ public final class PageRevisionFetcher {
         String urlStr = "http://" + lang
                 + ".wikipedia.org/w/api.php?format=xml&action=query&prop=revisions&titles=" + pageid
                 + "&rvlimit=" + PAGE_SIZE + "&rvprop=flags%7Ctimestamp%7Cuser%7Csize&rvdir=older" + rvstartid;
-        LOG.debug("Requesting URL: " + urlStr);
+        LOG.info("Requesting URL: " + urlStr);
         return wikiAPIClient.executeHTTPRequest(urlStr);
     }
 
