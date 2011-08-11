@@ -82,7 +82,12 @@ public final class AuthorInterestNetworkBuilder {
                 .sortByValue(generateIndegMapForMutuallyConnectedNeighbors(
                         mutuallyConnectedNeighbors, allPagesOrderedByIndeg));
 
-        List<Entry<String, Float>> topIndeg = Lists.newArrayList(allMutuallyConnectdNeighborsByIndeg.entrySet()).subList(0, 100);
+        List<Entry<String, Float>> topIndeg;
+        if(allMutuallyConnectdNeighborsByIndeg.size() > 100) {
+            topIndeg = Lists.newArrayList(allMutuallyConnectdNeighborsByIndeg.entrySet()).subList(0, 100);
+        } else {
+            topIndeg = Lists.newArrayList(allMutuallyConnectdNeighborsByIndeg.entrySet());
+        }
         try {
             FileUtils.writeLines(new File("out/topIndegDSK.txt"), topIndeg);
         } catch (IOException e) {
