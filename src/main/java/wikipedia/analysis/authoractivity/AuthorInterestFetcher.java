@@ -170,13 +170,13 @@ public final class AuthorInterestFetcher {
         }
 
         System.out.println("start author search");
-        Set<String> allInvolvedAuthors = getAllInvolvedAuthors(initialSearchResults.keySet());
-        //Set<String> allInvolvedAuthors = Sets.newHashSet(FileUtils.readLines(new File("out/dsk_net_authors.txt")));
-        //allInvolvedAuthors = Sets.newHashSet(Lists.newArrayList(allInvolvedAuthors).subList(0, 400));
+        //Set<String> allInvolvedAuthors = getAllInvolvedAuthors(initialSearchResults.keySet());
+        Set<String> allInvolvedAuthors = Sets.newHashSet(FileUtils.readLines(new File("out/dsk_net_authors.txt")));
+        allInvolvedAuthors = Sets.newHashSet(Lists.newArrayList(allInvolvedAuthors).subList(0, 400));
         System.out.println("end author search");
 
         //FileUtils.writeLines(new File("out/dsk_net_authors.txt"), allInvolvedAuthors);
-        FileUtils.readLines(new File("out/dsk_net_authors.txt"));
+        //FileUtils.readLines(new File("out/dsk_net_authors.txt"));
         //LOG.info("Downloading information for " + allSeenNodes.size() + " pages");
         //Map<Integer, String> allPages = prepareNodesForNetwork(allSeenNodes);
 
