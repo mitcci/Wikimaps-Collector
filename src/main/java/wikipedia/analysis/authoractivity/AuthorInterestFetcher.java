@@ -172,7 +172,7 @@ public final class AuthorInterestFetcher {
         System.out.println("start author search");
         //Set<String> allInvolvedAuthors = getAllInvolvedAuthors(initialSearchResults.keySet());
         Set<String> allInvolvedAuthors = Sets.newHashSet(FileUtils.readLines(new File("out/dsk_net_authors.txt")));
-        allInvolvedAuthors = Sets.newHashSet(Lists.newArrayList(allInvolvedAuthors).subList(0, 4000));
+        allInvolvedAuthors = Sets.newHashSet(Lists.newArrayList(allInvolvedAuthors).subList(0, 40000));
         System.out.println("end author search");
 
         //FileUtils.writeLines(new File("out/dsk_net_authors.txt"), allInvolvedAuthors);
