@@ -5,21 +5,12 @@ package wikipedia.network;
  */
 public final class GraphEdge {
 
-    private static final int DEFAULT_WEIGHT = 1;
-
     private final String from;
     private final String to;
-    private final int edgeWeight;
-
-
-    public GraphEdge(final String from, final String to, final int edgeWeight) {
-        this.from = from;
-        this.to = to;
-        this.edgeWeight = edgeWeight;
-    }
 
     public GraphEdge(final String from, final String to) {
-        this(from, to, DEFAULT_WEIGHT);
+        this.from = from;
+        this.to = to;
     }
 
     public String getFrom() {
@@ -30,13 +21,9 @@ public final class GraphEdge {
         return to;
     }
 
-    public int getEdgeWeight() {
-        return edgeWeight;
-    }
-
     @Override
     public String toString() {
-        return "GraphEdge [from=" + from + ", to=" + to + ", edgeWeight=" + edgeWeight + "]";
+        return from + ";;" + to;
     }
 
     @Override

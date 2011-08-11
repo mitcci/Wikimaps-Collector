@@ -179,7 +179,7 @@ public final class RelatedResultsFetcher {
         LOG.info("Downloading information for " + allSeenNodes.size() + " pages");
         Map<Integer, String> allPages = prepareNodesForNetwork(allSeenNodes);
 
-        DeltaPrinter dp = new DeltaPrinter(allPages, allTimeFrames, lang);
+        DeltaPrinter dp = new DeltaPrinter(allPages, allTimeFrames);
         String completeJSONForPage = dp.buildNetworksAndGenerateInfo(searchTerm);
         writeToFile(completeJSONForPage);
     }

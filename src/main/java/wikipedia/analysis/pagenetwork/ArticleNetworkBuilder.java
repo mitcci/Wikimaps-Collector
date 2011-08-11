@@ -47,8 +47,8 @@ public final class ArticleNetworkBuilder {
     private final Map<Integer, String> allPagesInNetwork;
 
     public ArticleNetworkBuilder(final Map<Integer, String> allPagesInNetwork,
-                          final DBUtil database,
-                          final String searchTerm) {
+                                 final DBUtil database,
+                                 final String searchTerm) {
         this.database = database;
         this.allPagesInNetwork = allPagesInNetwork;
         this.searchTerm = searchTerm;

@@ -1,18 +1,13 @@
 package wikipedia.analysis.pagenetwork;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateMidnight;
 import org.joda.time.DateTime;
 
-import util.DateListGenerator;
 import wikipedia.database.DBUtil;
 import wikipedia.http.CategoryMemberFetcher;
 import wikipedia.network.GraphEdge;
@@ -30,42 +25,40 @@ public final class DeltaPrinter {
 
     private final Map<Integer, String> allPages;
     private final List<DateTime> allTimeFrames;
-    private final String lang;
 
     public DeltaPrinter(final List<String> categories, final List<DateTime> allTimeFrames, final String lang) {
         this(new CategoryMemberFetcher(categories, lang, new DBUtil()).getAllPagesInAllCategories(),
-                allTimeFrames, lang);
+                allTimeFrames);
     }
 
-    public DeltaPrinter(final Map<Integer, String> allPages, final List<DateTime> allTimeFrames, final String lang) {
+    public DeltaPrinter(final Map<Integer, String> allPages, final List<DateTime> allTimeFrames) {
         this.allPages =  allPages;
         this.allTimeFrames = allTimeFrames;
-        this.lang = lang;
     }
 
-    public static void main(final String[] args) throws IOException {
-        generateFileForCombination(CategoryLists.BORN_IN_THE_80IES,
-                "out/initialGraph_BORN_IN_THE_80IES.js");
-    }
-
-    private static void generateFileForCombination(final List<String> categories,
-                                                   final String outputFileName) throws IOException {
-        final DateTime dateTime = new DateMidnight(2011, 7, 1).toDateTime();
-        List<DateTime> allTimeFrames = DateListGenerator.getMonthGenerator().getDateList(36, dateTime);
-        DeltaPrinter dp = new DeltaPrinter(categories, allTimeFrames, "en");
-        String completeJSONForPage = dp.buildNetworksAndGenerateInfoXXX();
-        FileUtils.write(new File(outputFileName), completeJSONForPage, "UTF-8");
-    }
-
-    public String buildNetworksAndGenerateInfoXXX() {
-        List<TimeFrameGraph> dateGraphMap = Lists.newArrayList();
-        List<DateTime> allTimeFramesOldToNew = Lists.reverse(allTimeFrames);
-        DBUtil database = new DBUtil();
-        for (DateTime dateTime : allTimeFramesOldToNew) {
-            dateGraphMap.add(new SimpleIndegreeNetworkBuilder(allPages, database).getGraphAtDate(dateTime));
-        }
-        return generateTimeFrameInformation(dateGraphMap);
-    }
+//    public static void main(final String[] args) throws IOException {
+//        generateFileForCombination(CategoryLists.BORN_IN_THE_80IES,
+//                "out/initialGraph_BORN_IN_THE_80IES.js");
+//    }
+//
+//    private static void generateFileForCombination(final List<String> categories,
+//                                                   final String outputFileName) throws IOException {
+//        final DateTime dateTime = new DateMidnight(2011, 7, 1).toDateTime();
+//        List<DateTime> allTimeFrames = DateListGenerator.getMonthGenerator().getDateList(36, dateTime);
+//        DeltaPrinter dp = new DeltaPrinter(categories, allTimeFrames, "en");
+//        String completeJSONForPage = dp.buildNetworksAndGenerateInfoXXX();
+//        FileUtils.write(new File(outputFileName), completeJSONForPage, "UTF-8");
+//    }
+//
+//    public String buildNetworksAndGenerateInfoXXX() {
+//        List<TimeFrameGraph> dateGraphMap = Lists.newArrayList();
+//        List<DateTime> allTimeFramesOldToNew = Lists.reverse(allTimeFrames);
+//        DBUtil database = new DBUtil();
+//        for (DateTime dateTime : allTimeFramesOldToNew) {
+//            dateGraphMap.add(new SimpleIndegreeNetworkBuilder(allPages, database).getGraphAtDate(dateTime));
+//        }
+//        return generateTimeFrameInformation(dateGraphMap);
+//    }
 
     public String buildNetworksAndGenerateInfo(final String searchTerm) {
         List<TimeFrameGraph> dateGraphMap = Lists.newArrayList();
@@ -170,7 +163,7 @@ public final class DeltaPrinter {
     private String printLink(final Map<String, Integer> nameIndexMap,
                              final GraphEdge edge) {
         return "{\"source\": " + nameIndexMap.get(edge.getFrom()) + ", \"target\": "
-                + nameIndexMap.get(edge.getTo()) + ", \"value\": " + edge.getEdgeWeight() + "}";
+                + nameIndexMap.get(edge.getTo()) + ", \"value\": " + 1 + "}";
     }
 
 }
